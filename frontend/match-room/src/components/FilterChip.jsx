@@ -10,7 +10,7 @@ export default function FilterChip({ active, icon: Icon, children, onClick }) {
           : "border-line bg-white font-medium text-muted hover:border-brand-500/50"
       }`}
     >
-      <Icon size={15} aria-hidden="true" />
+      {Icon && <Icon size={15} aria-hidden="true" />}
       {children}
     </button>
   );

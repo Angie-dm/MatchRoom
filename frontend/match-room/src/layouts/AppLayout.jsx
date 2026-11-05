@@ -1,9 +1,11 @@
-import { Bell, Building2, CircleHelp, Compass, Heart, MapPin, MessageCircle, Plus, User } from "lucide-react";
+import { Bell, Building2, CircleHelp, Compass, Download, Heart, MapPin, MessageCircle, Plus, User, WifiOff } from "lucide-react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import Avatar from "../components/Avatar";
 import Logo from "../components/Logo";
 import Button from "../components/ui/Button";
 import { useCurrentUser } from "../hooks/useCurrentUser";
+import { useInstallPrompt } from "../hooks/useInstallPrompt";
+import { useOnlineStatus } from "../hooks/useOnlineStatus";
 
 const NAV = [
   { to: "/explorar", label: "Explorar", icon: Compass },
@@ -26,6 +28,8 @@ const tabLink = ({ isActive }) =>
 export default function AppLayout() {
   const user = useCurrentUser();
   const { pathname } = useLocation();
+  const online = useOnlineStatus();
+  const { puedeInstalar, instalar } = useInstallPrompt();
 
   return (
     <div className="min-h-dvh bg-canvas lg:grid lg:grid-cols-[256px_1fr]">
@@ -63,15 +67,26 @@ export default function AppLayout() {
       </aside>
 
       <div className="flex min-w-0 flex-col">
-        {/* Barra superior */}
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-line/60 bg-white/85 px-4 backdrop-blur sm:px-8">
+        {/* Barra superior: respeta el notch en la app instalada */}
+        <header className="sticky top-0 z-20 flex h-[calc(4rem+env(safe-area-inset-top))] items-center justify-between gap-3 border-b border-line/60 bg-white/85 px-4 pt-[env(safe-area-inset-top)] backdrop-blur sm:px-8">
           <Logo className="lg:hidden" />
           <p className="hidden items-center gap-2 text-sm font-medium lg:flex">
             <MapPin size={16} className="text-brand-500" aria-hidden="true" />
             {user.ciudad}
           </p>
           <div className="flex items-center gap-2 sm:gap-3">
-            <span className="hidden text-sm text-muted md:block">Tu próximo hogar empieza aquí</span>
+            <span className="hidden text-sm text-muted xl:block">Tu próximo hogar empieza aquí</span>
+            {puedeInstalar && (
+              <button
+                type="button"
+                onClick={instalar}
+                className="inline-flex h-10 items-center gap-2 rounded-xl bg-brand-100 px-3 text-sm font-semibold text-brand-700 transition hover:bg-brand-500 hover:text-white active:scale-95"
+              >
+                <Download size={16} aria-hidden="true" />
+                <span className="hidden sm:inline">Instalar app</span>
+                <span className="sr-only sm:hidden">Instalar app</span>
+              </button>
+            )}
             <button
               type="button"
               aria-label="Notificaciones"
@@ -83,6 +98,13 @@ export default function AppLayout() {
             <Avatar name={user.nombre} />
           </div>
         </header>
+
+        {!online && (
+          <div role="status" className="flex items-center gap-2 bg-brand-100 px-4 py-2 text-xs font-medium text-brand-700 sm:px-8">
+            <WifiOff size={14} className="shrink-0" aria-hidden="true" />
+            Sin conexión. Verás lo que ya cargaste; lo demás se actualizará al volver.
+          </div>
+        )}
 
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-28 sm:px-8 lg:pb-12">
           <div key={pathname} className="animate-fade-in">
