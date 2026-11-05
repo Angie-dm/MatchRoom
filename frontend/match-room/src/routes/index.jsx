@@ -3,8 +3,11 @@ import AppLayout from "../layouts/AppLayout";
 import AuthLayout from "../layouts/AuthLayout";
 import OnboardingLayout from "../layouts/OnboardingLayout";
 import Alojamientos from "../pages/Alojamientos";
+import DetalleEspacio from "../pages/DetalleEspacio";
 import Explorar from "../pages/Explorar";
 import Login from "../pages/Login";
+import Matches from "../pages/Matches";
+import Mensajes from "../pages/Mensajes";
 import PerfilPersona from "../pages/PerfilPersona";
 import Soon from "../pages/Soon";
 import StepBasics from "../pages/onboarding/StepBasics";
@@ -32,9 +35,9 @@ export const router = createBrowserRouter([
       { path: "/explorar", element: <Explorar /> },
       { path: "/explorar/:id", element: <PerfilPersona /> },
       { path: "/alojamientos", element: <Alojamientos /> },
-      { path: "/alojamientos/:id", element: <Soon title="Detalle del espacio" /> },
-      { path: "/matches", element: <Soon title="Mis matches" /> },
-      { path: "/mensajes", element: <Soon title="Mensajes" /> },
+      { path: "/alojamientos/:id", element: <DetalleEspacio /> },
+      { path: "/matches", element: <Matches /> },
+      { path: "/mensajes/:id?", element: <Mensajes /> },
       { path: "/perfil", element: <Soon title="Mi perfil" /> },
     ],
   },

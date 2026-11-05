@@ -2,7 +2,7 @@
 export const PERFILES = [
   {
     id: 1, nombre: "Lucía Hernández", edad: 24, ocupacion: "Diseñadora gráfica", ciudad: "Ciudad de México",
-    zona: "Roma Norte · Condesa", compat: 98, tags: ["Ordenada", "Sin humo", "Creativa"], presupuesto: 7800,
+    zona: "Roma Norte · Condesa", compat: 96, tags: ["Ordenada", "Sin humo", "Creativa"], presupuesto: 7800,
     verificado: true, foto: null, tono: "from-violet-300 to-fuchsia-300",
     frase: "Busco un hogar tranquilo, con buena luz y alguien con quien compartir un café de vez en cuando.",
     bio: "Soy diseñadora gráfica y trabajo de forma híbrida. Me gusta cocinar, visitar exposiciones y salir a caminar. En casa disfruto de la calma, las plantas y los espacios limpios. Busco una convivencia respetuosa: compartir momentos sin perder nuestro espacio personal.",
@@ -13,7 +13,7 @@ export const PERFILES = [
   },
   {
     id: 2, nombre: "Diego Ramírez", edad: 26, ocupacion: "Ingeniero de software", ciudad: "Ciudad de México",
-    zona: "Condesa · Roma Norte", compat: 91, tags: ["Híbrido", "Sin humo", "Tranquilo"], presupuesto: 8500,
+    zona: "Condesa · Roma Norte", compat: 88, tags: ["Híbrido", "Sin humo", "Tranquilo"], presupuesto: 8500,
     verificado: true, foto: null, tono: "from-indigo-300 to-sky-300",
     frase: "Busco un depa tranquilo donde se pueda trabajar a gusto y compartir una cena de vez en cuando.",
     bio: "Soy ingeniero de software y trabajo de forma híbrida. Me gusta correr por las mañanas, cocinar los domingos y ver series con buena compañía. Cuido los espacios comunes y espero lo mismo de quien comparta casa.",
@@ -34,15 +34,15 @@ export const PERFILES = [
     razones: ["Horarios de descanso similares", "Misma zona de interés", "Presupuesto compatible"],
   },
   {
-    id: 4, nombre: "Andrés Molina", edad: 27, ocupacion: "Fotógrafo", ciudad: "Ciudad de México",
-    zona: "Juárez · Roma Sur", compat: 86, tags: ["Creativo", "Mascotas", "Nocturno"], presupuesto: 6900,
+    id: 4, nombre: "Andrés López", edad: 25, ocupacion: "Analista de marketing", ciudad: "Ciudad de México",
+    zona: "Roma Norte · Condesa", compat: 86, tags: ["Ordenado", "Híbrido", "Cocinero"], presupuesto: 7200,
     verificado: false, foto: null, tono: "from-emerald-300 to-teal-300",
-    frase: "Busco un espacio con buena luz natural y gente creativa y relajada.",
-    bio: "Soy fotógrafo freelance y mis horarios cambian según los proyectos. Tengo un gato muy tranquilo. Me gusta el café, el cine y recorrer la ciudad con la cámara.",
-    intereses: ["Fotografía", "Cine", "Café"],
-    habitos: { trabajo: "Freelance · horario flexible", descanso: "Después de las 23:00", limpieza: "Equilibrado · entre todos", ambiente: "Solo en exteriores", mascotas: "Tengo un gato", visitas: "Ocasionales" },
+    frase: "Me gusta cocinar para otros y volver a una casa ordenada y con buena onda.",
+    bio: "Soy analista de marketing y trabajo de forma híbrida. Cocino casi todos los días y me gusta compartir la mesa de vez en cuando. Valoro una casa ordenada y acuerdos claros desde el principio.",
+    intereses: ["Cocina", "Música", "Cine"],
+    habitos: { trabajo: "Híbrido · 9:00 a 18:00", descanso: "Antes de las 23:00", limpieza: "Ordenado · por turnos", ambiente: "Hogar sin humo", mascotas: "No tengo, sí acepto", visitas: "Ocasionales" },
     mudanza: "2026-12-01", activo: "hace 1 día",
-    razones: ["Zonas de interés en común", "Aceptan mascotas", "Presupuesto compatible"],
+    razones: ["Zonas de interés en común", "Mismo nivel de orden", "Presupuesto compatible"],
   },
   {
     id: 5, nombre: "Camila Ortiz", edad: 25, ocupacion: "Psicóloga", ciudad: "Ciudad de México",

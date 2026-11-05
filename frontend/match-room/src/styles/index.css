@@ -121,3 +121,10 @@ body {
   border: 2px solid var(--color-brand-500);
   cursor: pointer;
 }
+html {
+  -webkit-tap-highlight-color: transparent;
+  text-size-adjust: 100%;
+}
+body {
+  overscroll-behavior-y: none; /* evita el rebote que se confunde con "recargar" en la app instalada */
+}

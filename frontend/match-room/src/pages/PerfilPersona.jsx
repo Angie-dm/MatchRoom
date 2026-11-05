@@ -186,7 +186,7 @@ export default function PerfilPersona() {
           </section>
 
           <section className={`${cardClass} flex flex-col gap-3`}>
-            <Button icon={MessageCircle} onClick={() => navigate("/mensajes")}>
+                       <Button icon={MessageCircle} onClick={() => navigate(`/mensajes/${perfil.id}`)}>
               Enviar mensaje
             </Button>
             <Button variant="secondary" onClick={() => setInteres((v) => !v)} aria-pressed={interes}>
