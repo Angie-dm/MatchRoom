@@ -29,11 +29,13 @@ export function ChipGroup({ label, options, value, onChange, multiple = false, e
     <div role="group" aria-label={label}>
       <p className="mb-2.5 text-sm font-semibold text-ink">{label}</p>
       <div className="flex flex-wrap gap-2.5">
-        {options.map((option) => (
-          <Chip key={option} selected={isOn(option)} onClick={() => toggle(option)}>
-            {option}
+        {options.map((option) => {
+          const value = typeof option === "string" ? option : option.value;
+          const label = typeof option === "string" ? option : option.label;
+          return <Chip key={value} selected={isOn(value)} onClick={() => toggle(value)}>
+            {label}
           </Chip>
-        ))}
+        })}
       </div>
       {error && <p className="mt-1.5 animate-fade-up text-xs text-red-600">{error}</p>}
     </div>

@@ -7,15 +7,30 @@ import Button from "../components/ui/Button";
 import Checkbox from "../components/ui/Checkbox";
 import Input from "../components/ui/Input";
 import { authService } from "../services/authService";
+import { useAuth } from "../hooks/useAuth";
+import { startOnboardingDraft } from "../utils/onboardingStorage";
+import { getOnboardingState } from "../services/onboardingService";
+import { draftFromProfile } from "../utils/onboardingProgress";
 
 export default function Login() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "", remember: true });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const { isDemoAvailable, refreshSession, startDemo } = useAuth();
 
   const set = (field) => (e) =>
     setForm({ ...form, [field]: e.target.type === "checkbox" ? e.target.checked : e.target.value });
+
+  const continueAfterAuthentication = async (sessionUser) => {
+    const { profile, nextStep } = await getOnboardingState();
+    if (!nextStep) {
+      navigate("/explorar", { replace: true });
+      return;
+    }
+    startOnboardingDraft(draftFromProfile(profile, sessionUser), sessionUser.id);
+    navigate(`/registro/${nextStep}`, { replace: true });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,20 +41,39 @@ export default function Login() {
     if (Object.keys(next).length) return;
 
     setLoading(true);
-    await authService.login({ email: form.email, password: form.password });
-    setLoading(false);
-        navigate("/explorar");
+    try {
+      await authService.login({ email: form.email, password: form.password });
+      const sessionUser = await refreshSession();
+      if (!sessionUser) throw new Error("No pudimos confirmar tu sesión.");
+      await continueAfterAuthentication(sessionUser);
+    } catch (error) {
+      setErrors({ form: error.message || "No pudimos iniciar sesión. Intenta de nuevo." });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const googleError = () => setErrors({ form: "No pudimos iniciar con Google. Intenta de nuevo." });
 
+  const startEmailRegistration = () => {
+    startOnboardingDraft({ proveedor: "correo" });
+  };
+
   const handleGoogle = async ({ credential }) => {
+    if (loading) return;
+    setLoading(true);
     try {
       await authService.loginWithGoogle(credential);
-      navigate("/registro/1"); // TODO: ir al inicio de la app cuando exista
-    } catch {
-      googleError();
-    }
+      const sessionUser = await refreshSession();
+      if (!sessionUser) throw new Error("No pudimos confirmar tu sesión.");
+      await continueAfterAuthentication(sessionUser);
+    } catch (error) {
+      setErrors({ form: error.message || "No pudimos iniciar con Google. Intenta de nuevo." });
+    } finally { setLoading(false); }
+  };
+
+  const handleDemo = () => {
+    if (startDemo()) navigate("/explorar");
   };
 
   return (
@@ -65,11 +99,16 @@ export default function Login() {
       </div>
 
       <GoogleButton onSuccess={handleGoogle} onError={googleError} />
+      {isDemoAvailable && (
+        <Button type="button" variant="secondary" className="mt-3 w-full" onClick={handleDemo}>
+          Entrar a demostración sin conexión
+        </Button>
+      )}
       {errors.form && <p className="mt-2 text-center text-xs text-red-600">{errors.form}</p>}
 
       <p className="mt-6 text-center text-sm text-muted">
         ¿Primera vez aquí?{" "}
-        <Link to="/registro" className="font-semibold text-brand-500 hover:underline">Crear cuenta</Link>
+        <Link to="/registro" onClick={startEmailRegistration} className="font-semibold text-brand-500 hover:underline">Crear cuenta</Link>
       </p>
       <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-xs text-muted">
         <ShieldCheck size={14} className="shrink-0 text-brand-500" aria-hidden="true" />

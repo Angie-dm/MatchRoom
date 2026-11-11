@@ -6,12 +6,12 @@ export const STEPS = [
 ];
 
 export const OPTIONS = {
-  jornada: ["Presencial", "Híbrida", "Desde casa"],
-  descanso: ["Temprano · antes de las 23 h", "Noche · después de las 23 h"],
-  orden: ["Relajado", "Equilibrado", "Muy ordenado"],
-  limpieza: ["Por turnos", "Entre todos", "Servicio externo"],
-  mascotas: ["No tengo", "Sí, un perro", "Sí, un gato"],
-  convivirMascotas: ["Sí, me encantan", "Prefiero sin mascotas"],
-  fumar: ["Hogar sin humo", "Solo en exteriores", "Me es indiferente"],
-  visitas: ["Ocasionales", "Frecuentes", "Lo conversamos"],
+  jornada: [{ value: "morning", label: "Mañana" }, { value: "afternoon", label: "Tarde" }, { value: "night", label: "Noche" }, { value: "remote", label: "Trabajo remoto" }, { value: "flexible", label: "Flexible o híbrido" }],
+  descanso: [{ value: "early", label: "Temprano" }, { value: "regular", label: "Horario regular" }, { value: "late", label: "Tarde o noche" }],
+  orden: [{ value: 1, label: "Relajado" }, { value: 3, label: "Equilibrado" }, { value: 5, label: "Muy ordenado" }],
+  mascotas: [{ value: false, label: "No" }, { value: true, label: "Sí" }],
+  convivirMascotas: [{ value: "accept", label: "Sí" }, { value: "reject", label: "No" }, { value: "indifferent", label: "Me es indiferente" }],
+  fumar: [{ value: "accept", label: "Acepto que fumen en casa" }, { value: "reject", label: "No acepto que fumen en casa" }, { value: "indifferent", label: "Me es indiferente" }],
+  visitas: [{ value: "never", label: "Nunca" }, { value: "rare", label: "Raras veces" }, { value: "sometimes", label: "A veces" }, { value: "often", label: "Frecuentes" }],
+  convivencia: [{ value: "join_existing_home", label: "Unirme a un hogar" }, { value: "find_place_together", label: "Encontrar vivienda juntos" }, { value: "any", label: "Cualquiera" }],
 };
