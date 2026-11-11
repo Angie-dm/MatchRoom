@@ -1,4 +1,4 @@
-export default function Input({ label, icon: Icon, error, hint, id, className = "", ...props }) {
+export default function Input({ label, icon: Icon, endAdornment, error, hint, id, className = "", ...props }) {
   const inputId = id ?? props.name;
   return (
     <div className={className}>
@@ -19,6 +19,7 @@ export default function Input({ label, icon: Icon, error, hint, id, className = 
           className="h-12 w-full min-w-0 bg-transparent text-base text-ink outline-none placeholder:text-muted/70 sm:text-[15px]"
           {...props}
         />
+        {endAdornment}
       </div>
       {error ? (
         <p className="mt-1.5 animate-fade-up text-xs text-red-600">{error}</p>

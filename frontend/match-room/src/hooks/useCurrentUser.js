@@ -1,34 +1,23 @@
-import { useState } from "react";
+import { useAuth } from "./useAuth";
+import { identityDisplayName } from "../utils/authIdentity";
 
-const KEY = "matchroom:onboarding";
-// "presentacion" es un campo futuro: mantiene el perfil por debajo del 100 %
-const FIELDS = [
-  "nombre", "edad", "ocupacion", "correo", "ciudad", "zonas", "mudanza",
-  "jornada", "descanso", "orden", "limpieza", "rutina",
-  "mascotas", "convivirMascotas", "fumar", "visitas", "espacio", "presentacion",
-];
-
-function read() {
-  try {
-    return JSON.parse(localStorage.getItem(KEY) ?? "{}");
-  } catch {
-    return {};
-  }
-}
-
-// TODO: cuando exista la API, estos datos vendrán de la sesión del usuario.
 export function useCurrentUser() {
-  const [data] = useState(read);
-  const nombre = data.nombre?.trim() || "Invitado";
-  const filled = FIELDS.filter((f) => (Array.isArray(data[f]) ? data[f].length > 0 : Boolean(data[f]))).length;
+  const { user, status, refreshSession } = useAuth();
+  const nombre = identityDisplayName(user);
 
   return {
     nombre,
+    email: user?.email || "",
     primerNombre: nombre.split(" ")[0],
-    ciudad: data.ciudad || "Ciudad de México",
-    zonas: data.zonas ?? [],
-    presupuestoMin: data.presupuestoMin ?? 5000,
-    presupuestoMax: data.presupuestoMax ?? 10000,
-    perfilPct: Math.round((filled / FIELDS.length) * 100),
+    ciudad: "Ciudad de México",
+    zonas: [],
+    presupuestoMin: 5000,
+    presupuestoMax: 10000,
+    perfilPct: 0,
+    isAuthenticated: status === "authenticated" || status === "demo",
+    isLoading: status === "loading",
+    sessionUnavailable: status === "unavailable",
+    isDemo: status === "demo",
+    refreshSession,
   };
 }

@@ -1,11 +1,10 @@
-import { Bell, Building2, CircleHelp, Compass, Download, Heart, MapPin, MessageCircle, Plus, User, WifiOff } from "lucide-react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { Bell, Building2, CircleHelp, Compass, Download, Heart, MapPin, MessageCircle, Plus, User } from "lucide-react";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Avatar from "../components/Avatar";
 import Logo from "../components/Logo";
 import Button from "../components/ui/Button";
 import { useCurrentUser } from "../hooks/useCurrentUser";
 import { useInstallPrompt } from "../hooks/useInstallPrompt";
-import { useOnlineStatus } from "../hooks/useOnlineStatus";
 
 const NAV = [
   { to: "/explorar", label: "Explorar", icon: Compass },
@@ -28,7 +27,7 @@ const tabLink = ({ isActive }) =>
 export default function AppLayout() {
   const user = useCurrentUser();
   const { pathname } = useLocation();
-  const online = useOnlineStatus();
+  const navigate = useNavigate();
   const { puedeInstalar, instalar } = useInstallPrompt();
 
   return (
@@ -49,7 +48,7 @@ export default function AppLayout() {
             </NavLink>
           ))}
         </nav>
-        <Button icon={Plus}>Publicar anuncio</Button>
+        <Button icon={Plus} onClick={() => navigate("/publicar-anuncio")}>Publicar anuncio</Button>
 
         <div className="mt-auto flex flex-col gap-3">
           <div className="flex items-center gap-3 rounded-2xl border border-line/70 bg-brand-50/60 p-3">
@@ -67,6 +66,11 @@ export default function AppLayout() {
       </aside>
 
       <div className="flex min-w-0 flex-col">
+        {user.isDemo && (
+          <div role="status" className="bg-brand-700 px-4 py-2 text-center text-xs font-semibold text-white">
+            Modo demostración offline · No se usa ninguna sesión del servidor
+          </div>
+        )}
         {/* Barra superior: respeta el notch en la app instalada */}
         <header className="sticky top-0 z-20 flex h-[calc(4rem+env(safe-area-inset-top))] items-center justify-between gap-3 border-b border-line/60 bg-white/85 px-4 pt-[env(safe-area-inset-top)] backdrop-blur sm:px-8">
           <Logo className="lg:hidden" />
@@ -98,13 +102,6 @@ export default function AppLayout() {
             <Avatar name={user.nombre} />
           </div>
         </header>
-
-        {!online && (
-          <div role="status" className="flex items-center gap-2 bg-brand-100 px-4 py-2 text-xs font-medium text-brand-700 sm:px-8">
-            <WifiOff size={14} className="shrink-0" aria-hidden="true" />
-            Sin conexión. Verás lo que ya cargaste; lo demás se actualizará al volver.
-          </div>
-        )}
 
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-28 sm:px-8 lg:pb-12">
           <div key={pathname} className="animate-fade-in">

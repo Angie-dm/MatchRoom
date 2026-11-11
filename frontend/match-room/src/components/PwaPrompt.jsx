@@ -1,6 +1,7 @@
 import { CircleCheck, RefreshCw, X } from "lucide-react";
 import { useEffect } from "react";
 import { useRegisterSW } from "virtual:pwa-register/react";
+import { updateAppShellMetadata } from "../services/appShellStorage";
 
 export default function PwaPrompt() {
   const {
@@ -14,6 +15,14 @@ export default function PwaPrompt() {
     const t = setTimeout(() => setOfflineReady(false), 5000);
     return () => clearTimeout(t);
   }, [offlineReady, setOfflineReady]);
+
+  useEffect(() => {
+    if (offlineReady) updateAppShellMetadata({ serviceWorkerReadyAt: Date.now() });
+  }, [offlineReady]);
+
+  useEffect(() => {
+    if (needRefresh) updateAppShellMetadata({ updateAvailableAt: Date.now() });
+  }, [needRefresh]);
 
   if (!offlineReady && !needRefresh) return null;
 
@@ -31,7 +40,7 @@ export default function PwaPrompt() {
             <div className="mt-3 flex gap-2">
               <button
                 type="button"
-                onClick={() => updateServiceWorker(true)}
+                onClick={() => { updateAppShellMetadata({ lastUpdateRequestedAt: Date.now() }); updateServiceWorker(true); }}
                 className="h-10 rounded-xl bg-brand-500 px-4 text-sm font-semibold text-white transition active:scale-95"
               >
                 Actualizar

@@ -2,13 +2,21 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
+import { fileURLToPath } from "node:url";
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     tailwindcss(),
-    VitePWA({
+    mode !== "capacitor" && VitePWA({
       registerType: "prompt", // avisa antes de actualizar
+      // Vite dev does not register a Service Worker unless explicitly enabled.
+      // This makes localhost:5173 useful for PWA testing; production still
+      // uses the generated Workbox Service Worker below.
+      devOptions: {
+        enabled: true,
+        type: "module",
+      },
       includeAssets: ["favicon.ico", "apple-touch-icon-180x180.png", "logo.svg"],
       manifest: {
         id: "/",
@@ -42,6 +50,19 @@ export default defineConfig({
         // A propósito NO se cachean respuestas de la API: son datos autenticados.
       },
     }),
-  ],
-  resolve: { dedupe: ["react", "react-dom"] },
-});
+  ].filter(Boolean),
+  // Google Identity uses a popup and postMessage. Keep COOP compatible with it
+  // in both Vite development and preview, without weakening backend headers.
+  server: {
+    headers: { "Cross-Origin-Opener-Policy": "same-origin-allow-popups" },
+  },
+  preview: {
+    headers: { "Cross-Origin-Opener-Policy": "same-origin-allow-popups" },
+  },
+  resolve: {
+    dedupe: ["react", "react-dom"],
+    alias: mode === "capacitor"
+      ? { "virtual:pwa-register/react": fileURLToPath(new URL("./src/components/pwaRegisterStub.js", import.meta.url)) }
+      : {},
+  },
+}));
