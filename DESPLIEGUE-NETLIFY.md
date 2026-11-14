@@ -59,15 +59,16 @@ subdominio tipo `https://nombre-aleatorio.netlify.app`, que puedes cambiar en
 
 ## Paso 4. Variables de entorno (opcional en esta etapa)
 
-`netlify.toml` ya define `VITE_ENABLE_DEMO = "true"`, así que el sitio publicado
-incluye el botón **"Entrar a demostración sin conexión"** en el login. Al pulsarlo
-se entra a la aplicación con datos simulados (Explorar, Alojamientos, Matches,
-Mensajes y Mi Perfil) y aparece una banda que indica que es una demostración.
+Mientras no exista `VITE_API_URL`, el login muestra automáticamente el botón
+**"Entrar a demostración sin conexión"**. Al pulsarlo se entra con datos
+simulados (Explorar, Alojamientos, Matches, Mensajes y Mi Perfil) y aparece una
+banda que indica que es una demostración. No hace falta configurar nada en
+Netlify para esto.
 
-Para ocultar ese botón, cambia el valor a `"false"` en `netlify.toml` y vuelve a
-desplegar. Hazlo cuando el backend real esté conectado: mientras el modo demo
-esté activo, la aplicación no valida sesiones contra el servidor y el login real
-no funciona aunque configures `VITE_API_URL`.
+Puedes controlarlo con `VITE_ENABLE_DEMO`: `"true"` fuerza la demo aunque haya
+API y `"false"` la oculta siempre. Cuando conectes el backend real, define
+`VITE_API_URL` y la demo se desactiva sola; mientras esté activa, la aplicación
+no valida sesiones contra el servidor.
 
 Cuando exista un backend publicado, en **Site configuration > Environment
 variables** agrega:
@@ -84,9 +85,15 @@ build.
 ## Paso 5. Verificar
 
 - La URL abre y redirige a `/login`.
+- En el login debe verse **"Entrar a demostración sin conexión"**.
 - `/explorar` escrito directamente en el navegador carga la aplicación (no 404).
 - En DevTools > Application se ven el manifiesto y el Service Worker.
 - La PWA se puede instalar desde el icono de la barra de direcciones.
+
+Si el botón no aparece después de un despliegue, el Service Worker puede estar
+sirviendo el bundle anterior: acepta el aviso de nueva versión, recarga con
+Ctrl+F5 o, en DevTools > Application > Service Workers, pulsa **Update** y luego
+**Unregister** y recarga.
 
 ## Qué funciona y qué no en esta etapa
 
@@ -116,7 +123,8 @@ Para que el login funcione de verdad hace falta:
    pero no están en `package.json`.
 3. Ejecutar migraciones y seeds para tener catálogo y usuarios.
 4. Publicar el backend con HTTPS y configurar `VITE_API_URL` en Netlify.
-5. Poner `VITE_ENABLE_DEMO = "false"` en `netlify.toml` y redesplegar.
+5. Al definir `VITE_API_URL`, la demo se desactiva sola (o usa
+   `VITE_ENABLE_DEMO=false` para forzarlo).
 6. Resolver el envío de la cookie de sesión (proxy `/api` en Netlify o cookie
    `SameSite=None; Secure`).
 

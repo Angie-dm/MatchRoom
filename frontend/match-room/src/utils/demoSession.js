@@ -8,13 +8,23 @@ export const DEMO_USER = {
   activeMode: "seeker",
 };
 
+/**
+ * Reglas del modo demostración:
+ * - Plataforma nativa (Capacitor): siempre disponible.
+ * - `?demo=1` en desarrollo: disponible.
+ * - `VITE_ENABLE_DEMO="true"`: se fuerza aunque haya API configurada.
+ * - `VITE_ENABLE_DEMO="false"`: se desactiva siempre.
+ * - Sin `VITE_API_URL` no existe forma de autenticarse, así que la demo queda
+ *   disponible por defecto para poder probar la aplicación.
+ */
 export function isDemoAvailable() {
   if (Capacitor.isNativePlatform()) return true;
-  // En builds publicados el modo demo se habilita explícitamente con
-  // VITE_ENABLE_DEMO=true (ver netlify.toml) y se muestra como una opción
-  // visible en el login. Nunca se activa solo.
-  if (import.meta.env.VITE_ENABLE_DEMO === "true") return true;
-  return import.meta.env.DEV && new URLSearchParams(window.location.search).get("demo") === "1";
+  const forced = import.meta.env.VITE_ENABLE_DEMO === "true";
+  const disabled = import.meta.env.VITE_ENABLE_DEMO === "false";
+  const devQuery = import.meta.env.DEV && new URLSearchParams(window.location.search).get("demo") === "1";
+  if (devQuery || forced) return true;
+  if (disabled) return false;
+  return !import.meta.env.VITE_API_URL;
 }
 
 export function hasDemoSession() {
