@@ -1,0 +1,21 @@
+# Despliegue del frontend en Netlify.
+# El repositorio guarda el proyecto en frontend/match-room, por eso se declara
+# "base": así Netlify no necesita configuración manual del directorio.
+
+[build]
+  base = "frontend/match-room"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Vite 8 requiere Node 20.19+ o 22.12+.
+  NODE_VERSION = "22"
+
+# React Router maneja rutas del lado del cliente (/explorar, /perfil, ...).
+# Sin esta reescritura, abrir o recargar una ruta profunda devuelve 404.
+# Netlify sirve primero los archivos existentes, así que el manifiesto, el
+# Service Worker y los assets no se ven afectados.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
