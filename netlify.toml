@@ -10,6 +10,9 @@
 [build.environment]
   # Vite 8 requiere Node 20.19+ o 22.12+.
   NODE_VERSION = "22"
+  # Habilita el botón "Entrar a demostración" del login con datos simulados.
+  # Ponlo en "false" para ocultarlo cuando el backend real esté conectado.
+  VITE_ENABLE_DEMO = "true"
 
 # React Router maneja rutas del lado del cliente (/explorar, /perfil, ...).
 # Sin esta reescritura, abrir o recargar una ruta profunda devuelve 404.

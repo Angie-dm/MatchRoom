@@ -10,8 +10,8 @@ backend (ver la sección final).
   `frontend/match-room`, el comando `npm run build`, la carpeta publicada `dist`,
   Node 22 y la reescritura SPA (`/* -> /index.html`) para que rutas como
   `/explorar` o `/perfil` no devuelvan 404 al recargar.
-- `frontend/match-room/.env.example`: documenta `VITE_API_URL` y
-  `VITE_GOOGLE_CLIENT_ID`.
+- `frontend/match-room/.env.example`: documenta `VITE_API_URL`,
+  `VITE_GOOGLE_CLIENT_ID` y `VITE_ENABLE_DEMO`.
 - `frontend/match-room/package.json` y `package-lock.json`: declaran
   `@capacitor/core`, que el código ya importaba y faltaba en el commit. Sin eso
   el build en Netlify falla.
@@ -59,9 +59,15 @@ subdominio tipo `https://nombre-aleatorio.netlify.app`, que puedes cambiar en
 
 ## Paso 4. Variables de entorno (opcional en esta etapa)
 
-Sin variables, la aplicación se publica y muestra el login, pero las llamadas a
-la API apuntan a `http://localhost:3000/api/v1` y fallan, y el botón de Google no
-funciona porque no tiene Client ID.
+`netlify.toml` ya define `VITE_ENABLE_DEMO = "true"`, así que el sitio publicado
+incluye el botón **"Entrar a demostración sin conexión"** en el login. Al pulsarlo
+se entra a la aplicación con datos simulados (Explorar, Alojamientos, Matches,
+Mensajes y Mi Perfil) y aparece una banda que indica que es una demostración.
+
+Para ocultar ese botón, cambia el valor a `"false"` en `netlify.toml` y vuelve a
+desplegar. Hazlo cuando el backend real esté conectado: mientras el modo demo
+esté activo, la aplicación no valida sesiones contra el servidor y el login real
+no funciona aunque configures `VITE_API_URL`.
 
 Cuando exista un backend publicado, en **Site configuration > Environment
 variables** agrega:
@@ -89,13 +95,16 @@ Funciona:
 - Carga de la interfaz y navegación entre pantallas.
 - Instalación de la PWA, manifiesto, Service Worker y precache.
 - Carga sin conexión del shell y de las rutas públicas.
+- Recorrido completo de la aplicación en modo demostración, con datos simulados
+  y sin llamadas al backend.
 
 No funciona todavía:
 
-- Inicio de sesión y registro: el backend de la rama `feature/test` no tiene
+- Inicio de sesión real y registro: el backend de la rama `feature/test` no tiene
   endpoints `/auth` y la base de datos no tiene usuarios.
-- Onboarding con datos reales y Mi Perfil: requieren API.
-- Explorar, Alojamientos, Matches y Mensajes: usan datos simulados.
+- Onboarding con datos reales, Mi Perfil editable y guardado de cambios.
+- Explorar, Alojamientos, Matches y Mensajes con datos reales: usan datos
+  simulados.
 
 ## Siguiente fase (backend)
 
@@ -107,7 +116,8 @@ Para que el login funcione de verdad hace falta:
    pero no están en `package.json`.
 3. Ejecutar migraciones y seeds para tener catálogo y usuarios.
 4. Publicar el backend con HTTPS y configurar `VITE_API_URL` en Netlify.
-5. Resolver el envío de la cookie de sesión (proxy `/api` en Netlify o cookie
+5. Poner `VITE_ENABLE_DEMO = "false"` en `netlify.toml` y redesplegar.
+6. Resolver el envío de la cookie de sesión (proxy `/api` en Netlify o cookie
    `SameSite=None; Secure`).
 
 Ninguno de estos pasos se aplicó todavía.

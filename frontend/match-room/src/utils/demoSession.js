@@ -9,9 +9,12 @@ export const DEMO_USER = {
 };
 
 export function isDemoAvailable() {
-  return Capacitor.isNativePlatform() || (
-    import.meta.env.DEV && new URLSearchParams(window.location.search).get("demo") === "1"
-  );
+  if (Capacitor.isNativePlatform()) return true;
+  // En builds publicados el modo demo se habilita explícitamente con
+  // VITE_ENABLE_DEMO=true (ver netlify.toml) y se muestra como una opción
+  // visible en el login. Nunca se activa solo.
+  if (import.meta.env.VITE_ENABLE_DEMO === "true") return true;
+  return import.meta.env.DEV && new URLSearchParams(window.location.search).get("demo") === "1";
 }
 
 export function hasDemoSession() {
