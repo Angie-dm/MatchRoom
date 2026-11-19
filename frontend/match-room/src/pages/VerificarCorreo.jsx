@@ -1,5 +1,5 @@
 import { CheckCircle2, MailWarning } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Badge from "../components/ui/Badge";
 import Button from "../components/ui/Button";
@@ -13,23 +13,20 @@ export default function VerificarCorreo() {
   const [status, setStatus] = useState(token ? "loading" : "missing");
   const [error, setError] = useState("");
   const [resend, setResend] = useState({ sending: false, message: "", error: "" });
+  // React StrictMode mounts effects twice in development. The token is
+  // single-use, so the second call would always fail and hide the success.
+  const attemptedToken = useRef("");
 
   useEffect(() => {
-    if (!token) return undefined;
-    let active = true;
+    if (!token || attemptedToken.current === token) return;
+    attemptedToken.current = token;
     authService
       .verifyEmail(token)
-      .then(() => {
-        if (active) setStatus("success");
-      })
+      .then(() => setStatus("success"))
       .catch((requestError) => {
-        if (!active) return;
         setStatus("error");
         setError(requestError.message || "El enlace no es válido o ya venció.");
       });
-    return () => {
-      active = false;
-    };
   }, [token]);
 
   const resendEmail = async () => {
