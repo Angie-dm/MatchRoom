@@ -18,8 +18,15 @@ export default function StepBudget() {
   const [citiesError, setCitiesError] = useState("");
   const [citiesLoading, setCitiesLoading] = useState(true);
   const [citiesSource, setCitiesSource] = useState("network");
+  const [reloadKey, setReloadKey] = useState(0);
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
+
+  const retryCities = () => {
+    setCitiesLoading(true);
+    setCitiesError("");
+    setReloadKey((key) => key + 1);
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -28,7 +35,7 @@ export default function StepBudget() {
       .catch(() => { if (!controller.signal.aborted) setCitiesError("No pudimos cargar las ciudades. Intenta de nuevo."); })
       .finally(() => { if (!controller.signal.aborted) setCitiesLoading(false); });
     return () => controller.abort();
-  }, []);
+  }, [reloadKey]);
 
   const selectCity = (cityId) => update({ cityId, zoneIds: [] });
 
@@ -71,9 +78,18 @@ export default function StepBudget() {
     <div className="flex flex-col gap-5">
       <div>
         {citiesLoading && <span className="text-xs font-normal text-muted">Cargando ciudades…</span>}
-        {citiesError && <span className="text-xs font-normal text-red-600">{citiesError}</span>}
+        {(citiesError || (!citiesLoading && !cities.length)) && (
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className={citiesError ? "text-red-600" : "text-muted"}>
+              {citiesError || "No hay ciudades disponibles en este momento."}
+            </span>
+            <button type="button" onClick={retryCities} className="font-semibold text-brand-500 underline underline-offset-2">
+              Reintentar
+            </button>
+          </div>
+        )}
         {citiesSource === "offline" && <span role="status" className="text-xs font-normal text-amber-700">Mostrando catálogo guardado en este dispositivo.</span>}
-        {!citiesLoading && !citiesError && <LocationSelector cities={cities} cityId={data.cityId} zoneIds={data.zoneIds} onCityChange={selectCity} onZoneIdsChange={(zoneIds) => update({ zoneIds })} disabled={saving} />}
+        {!citiesLoading && !citiesError && cities.length > 0 && <LocationSelector cities={cities} cityId={data.cityId} zoneIds={data.zoneIds} onCityChange={selectCity} onZoneIdsChange={(zoneIds) => update({ zoneIds })} disabled={saving} />}
         {errors.cityId && <span className="text-xs font-normal text-red-600">{errors.cityId}</span>}
         {errors.zoneIds && <p className="mt-1 text-xs text-red-600">{errors.zoneIds}</p>}
       </div>
