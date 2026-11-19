@@ -11,6 +11,9 @@ import Mensajes from "../pages/Mensajes";
 import PerfilPersona from "../pages/PerfilPersona";
 import MiPerfil from "../pages/MiPerfil";
 import PublicarAnuncio from "../pages/PublicarAnuncio";
+import RecuperarContrasena from "../pages/RecuperarContrasena";
+import RestablecerContrasena from "../pages/RestablecerContrasena";
+import VerificarCorreo from "../pages/VerificarCorreo";
 import StepBasics from "../pages/onboarding/StepBasics";
 import StepBudget from "../pages/onboarding/StepBudget";
 import StepRoutine from "../pages/onboarding/StepRoutine";
@@ -19,7 +22,15 @@ import ProtectedRoute from "../components/ProtectedRoute";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Navigate to="/login" replace /> },
-  { element: <AuthLayout />, children: [{ path: "/login", element: <Login /> }] },
+  {
+    element: <AuthLayout />,
+    children: [
+      { path: "/login", element: <Login /> },
+      { path: "/recuperar-contrasena", element: <RecuperarContrasena /> },
+      { path: "/restablecer-contrasena", element: <RestablecerContrasena /> },
+      { path: "/verificar-correo", element: <VerificarCorreo /> },
+    ],
+  },
   {
     path: "/registro",
     element: <OnboardingLayout />,

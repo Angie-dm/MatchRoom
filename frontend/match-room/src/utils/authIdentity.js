@@ -11,6 +11,7 @@ export function sessionIdentity(response) {
     id: user.id,
     email: user.email,
     activeMode: user.activeMode,
+    emailVerified: user.emailVerified === true,
     firstName: optionalText(user.firstName),
     lastName: optionalText(user.lastName),
   };
