@@ -1,5 +1,5 @@
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import StepFooter from "../../components/StepFooter";
 import StepHeader from "../../components/StepHeader";
@@ -12,8 +12,8 @@ import { useAuth } from "../../hooks/useAuth";
 
 export default function StepBasics() {
   const navigate = useNavigate();
-  const { data, update } = useOnboarding();
-  const { user, refreshSession } = useAuth();
+  const { data, update, reset } = useOnboarding();
+  const { user, refreshSession, logout } = useAuth();
   const [errors, setErrors] = useState({});
   const [confirmacion, setConfirmacion] = useState("");
   const [mostrarPassword, setMostrarPassword] = useState(false);
@@ -21,8 +21,22 @@ export default function StepBasics() {
   const [loading, setLoading] = useState(false);
   const esGoogle = data.proveedor === "google";
   const hasExistingSession = Boolean(user);
-  const requiresPassword = !esGoogle && !hasExistingSession;
+  const readOnlyEmail = esGoogle || hasExistingSession;
+  const requiresPassword = !readOnlyEmail;
   const bind = (field) => ({ value: data[field], onChange: (e) => update({ [field]: e.target.value }) });
+
+  // A logged-in user finishing onboarding must see the email of that account,
+  // not an empty read-only field with no way to switch accounts.
+  useEffect(() => {
+    if (readOnlyEmail && user?.email && !data.correo) {
+      update({ correo: user.email });
+    }
+  }, [readOnlyEmail, user?.email, data.correo, update]);
+
+  const switchAccount = async () => {
+    await logout();
+    reset();
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -78,9 +92,25 @@ export default function StepBasics() {
           <Input label="Ocupación" name="ocupacion" error={errors.ocupacion} {...bind("ocupacion")} />
         </div>
         <Input label="Correo electrónico" name="correo" type="email" icon={Mail} autoComplete="email"
-          readOnly={esGoogle || hasExistingSession} error={errors.correo}
+          readOnly={readOnlyEmail} error={errors.correo}
           hint={requiresPassword ? "Te enviaremos un enlace para verificar tu correo." : undefined}
           {...bind("correo")} />
+        {readOnlyEmail && (
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-brand-200 bg-brand-50 p-3 text-xs text-brand-800">
+            <span>
+              {hasExistingSession
+                ? `Estás completando el registro con ${user.email}.`
+                : "Tu sesión de Google ya no está activa."}
+            </span>
+            <button
+              type="button"
+              onClick={hasExistingSession ? switchAccount : () => update({ proveedor: "correo" })}
+              className="font-semibold underline underline-offset-2"
+            >
+              {hasExistingSession ? "Usar otro correo" : "Registrar con correo"}
+            </button>
+          </div>
+        )}
         {requiresPassword && (
           <>
             <Input

@@ -51,7 +51,7 @@ export default function LocationSelector({ cities, cityId, zoneIds = [], onCityC
       </label>
       <label className="flex flex-col gap-2 text-sm font-semibold">Ciudad
         <select value={cityId || ""} onChange={(event) => onCityChange(event.target.value)} disabled={disabled || !activeState} className="h-11 rounded-xl border border-line bg-white px-3 font-normal disabled:cursor-not-allowed disabled:bg-brand-50">
-          <option value="">Selecciona una ciudad</option>
+          <option value="">{activeState ? "Selecciona una ciudad" : "Primero elige un estado"}</option>
           {filteredCities.map((city) => <option key={city.id} value={city.id}>{city.name} — {city.stateName}</option>)}
         </select>
       </label>
