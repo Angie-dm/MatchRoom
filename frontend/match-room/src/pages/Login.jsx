@@ -89,7 +89,7 @@ export default function Login() {
           value={form.password} onChange={set("password")} error={errors.password} />
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Checkbox checked={form.remember} onChange={set("remember")}>Recordarme</Checkbox>
-          <a href="#" className="text-sm font-semibold text-brand-500 hover:underline">Olvidé mi contraseña</a>
+          <Link to="/recuperar-contrasena" className="text-sm font-semibold text-brand-500 hover:underline">Olvidé mi contraseña</Link>
         </div>
         <Button type="submit" icon={ArrowRight} disabled={loading}>Iniciar sesión</Button>
       </form>

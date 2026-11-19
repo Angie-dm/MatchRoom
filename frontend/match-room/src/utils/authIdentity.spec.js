@@ -7,12 +7,14 @@ describe("sessionIdentity", () => {
       id: "account-1",
       email: "person@example.com",
       activeMode: "seeker",
+      emailVerified: true,
       firstName: "Ana",
       lastName: "López",
     } })).toEqual({
       id: "account-1",
       email: "person@example.com",
       activeMode: "seeker",
+      emailVerified: true,
       firstName: "Ana",
       lastName: "López",
     });

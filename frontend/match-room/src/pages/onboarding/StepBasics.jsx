@@ -42,6 +42,14 @@ export default function StepBasics() {
     setLoading(true);
     try {
       if (!hasExistingSession && !esGoogle) await authService.register(data);
+      // Google sign-in (and any pre-existing session) already has an account,
+      // so the legal acceptance is recorded on its own endpoint.
+      if (hasExistingSession) {
+        await authService.acceptLegal({
+          acceptTerms: data.terminos,
+          adultDeclared: data.terminos,
+        });
+      }
       const sessionUser = user || await refreshSession();
       if (!sessionUser) throw new Error("No pudimos confirmar tu sesión.");
       await profileService.patchMe({
@@ -70,7 +78,9 @@ export default function StepBasics() {
           <Input label="Ocupación" name="ocupacion" error={errors.ocupacion} {...bind("ocupacion")} />
         </div>
         <Input label="Correo electrónico" name="correo" type="email" icon={Mail} autoComplete="email"
-          readOnly={esGoogle || hasExistingSession} error={errors.correo} {...bind("correo")} />
+          readOnly={esGoogle || hasExistingSession} error={errors.correo}
+          hint={requiresPassword ? "Te enviaremos un enlace para verificar tu correo." : undefined}
+          {...bind("correo")} />
         {requiresPassword && (
           <>
             <Input

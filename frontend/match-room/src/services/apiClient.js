@@ -13,13 +13,15 @@ export async function request(path, options = {}) {
   if (!API_URL) {
     throw new ApiError("Esta versión no está conectada a un servidor.");
   }
+  // `errorMessages` is a client-side override, never sent to the server.
+  const { errorMessages = {}, ...init } = options;
   let response;
   try {
     response = await fetch(`${API_URL}${path}`, {
       credentials: "include",
       cache: "no-store",
-      headers: { "Content-Type": "application/json", ...(options.headers || {}) },
-      ...options,
+      ...init,
+      headers: { "Content-Type": "application/json", ...(init.headers || {}) },
     });
   } catch {
     throw new ApiError("No pudimos conectarnos. Revisa tu conexión e intenta de nuevo.");
@@ -34,7 +36,16 @@ export async function request(path, options = {}) {
       429: "Demasiados intentos. Intenta de nuevo más tarde.",
       503: "Este servicio no está disponible por ahora.",
     };
-    throw new ApiError(publicMessages[response.status] || body.message || "No pudimos completar la solicitud.", response.status);
+    const serverMessage = Array.isArray(body.message)
+      ? body.message.join(" ")
+      : body.message;
+    throw new ApiError(
+      errorMessages[response.status]
+        || publicMessages[response.status]
+        || serverMessage
+        || "No pudimos completar la solicitud.",
+      response.status,
+    );
   }
   return body;
 }
